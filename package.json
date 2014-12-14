@@ -1,0 +1,31 @@
+{
+  "name": "FCPhotoGallery",
+  "subdomain": "FCPhotoGallery",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "version": "1.0.0-3",
+  "engines": {
+    "node": "0.8.x"
+  },
+  "dependencies": {
+    "chance": "~0.5.5",
+    "cloudinary": "^1.0.9",
+    "express": "3.2.6",
+    "locale": "0.0.15",
+    "mercadopago": "^0.2.1",
+    "node-schedule": "~0.1.13",
+    "nodemailer": "~0.6.1",
+    "socket.io": "0.9.14",
+    "usergrid": "0.10.7"
+  },
+  "description": "None",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": "",
+  "keywords": [
+    "gallery"
+  ],
+  "author": "Facundo Crego",
+  "license": "BSD"
+}

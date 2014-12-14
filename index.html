@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+
+    <title>PhotoGallery</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/cover.css" rel="stylesheet">
+    <link href="../css/default.css" rel="stylesheet">
+    <link href="../css/default.date.css" rel="stylesheet">
+    <link href="../css/default.time.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  	<div class="navbar navbar-fixed-top">
+  	<div class="container">
+  		<div class="header">
+	        <div class="pull-right">
+	          <a id="payButton" name="MP-Checkout" class="orange-ar-m-sq">Comprar</a>
+	        </div>
+	        <h3 class="pull-left">Facundo Crego Gallery</h3>	        
+	      </div>
+  	</div>
+  	<div class="container">
+  		<p id="photoTitle"></p>
+  		<button id="next" style="float: right" >>></button>
+  		<button id="previous" style="float: left"><<</button>
+  	</div>	
+  	</div>
+
+    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <script src="../js/docs.min.js"></script>
+    
+    <script>
+
+      var Loading = {
+          show : function() {
+            if ($("#loading").length > 0) {
+              return;
+            }
+            var node = $('<div id="loading" style="height:100%; width:100%; position:absolute; top: 0px; left: 0px;'+
+                    'background-color: rgba(100,100,100,0.5);"> '+
+              '<div style="text-align: center; margin-top: 25%;"><span><img src="images/loading.gif"></span> Loading...</div>'+
+              '</div>');
+            $("body").append(node); 
+          },
+          hide : function() {
+            $("#loading").remove();
+          }
+      };
+
+      var photos;
+      var currentPhotoIndex = 0;
+
+      Loading.show();
+      $.ajax({
+              url : "/api/photos",
+              type: "GET",
+              dataType: "json",
+              success: function(data, textStatus, jqXHR) {
+              		photos = data;
+              		refreshPhoto();
+                    Loading.hide();
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                  console.log("Fallo la busqueda de la foto");
+                  AlertUtils.showErrorAlert("Foto no encontrada","Llame al administrador.");
+                  Loading.hide();
+              }
+       });
+
+      var refreshPhoto = function() {
+      	$('#payButton').attr('href',"https://www.mercadopago.com/mla/checkout/pay?pref_id="+photos[currentPhotoIndex].itemMPID);
+      	$("#photoTitle").text(photos[currentPhotoIndex].title);
+      	$('body').css('background-image', 'url(' + photos[currentPhotoIndex].imageUrl + ')');
+      	$('body').css('background-size', 'cover');
+      };
+          
+      var nextPhoto = function() {
+      	if (currentPhotoIndex == photos.length-1){
+      		currentPhotoIndex == 0;	
+      	}
+      	else {
+      		currentPhotoIndex++;
+      	}
+      	refreshPhoto();
+      };
+
+      var previousPhoto = function() {
+		if (currentPhotoIndex == 0){
+      		currentPhotoIndex == photos.length-1;	
+      	}
+      	else {
+      		currentPhotoIndex--;
+      	}
+      	refreshPhoto();
+      };
+
+      $('#next').click(nextPhoto);
+      $('#previous').click(previousPhoto);
+
+      var AlertUtils = {
+          showSuccessAlert : function(title, message) {
+            $("#alertContainer").empty();
+            var node = $("<div id='successAlert' class='alert alert-success alert-dismissable'>"+
+              "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>"+
+              "<strong>"+title+": </strong>"+message+"</div>");
+            $("#alertContainer").append(node);
+          },
+          showErrorAlert : function(title, message) {
+            $("#alertContainer").empty();
+            var node = $("<div id='errorAlert' class='alert alert-danger alert-dismissable'>"+
+              "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>"+
+              "<strong>"+title+": </strong>"+message+"</div>");
+            $("#alertContainer").append(node);
+          }
+      };
+
+
+    </script>
+    <script type="text/javascript" src="http://mp-tools.mlstatic.com/buttons/render.js"></script>
+  </body>
+</html>
